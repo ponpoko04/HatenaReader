@@ -20,6 +20,7 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.StringRequest;
 import com.example.takayoshi.hatenareader.R;
 
 import static com.example.takayoshi.hatenareader.utils.LogUtils.makeLogTag;
@@ -78,12 +79,21 @@ public class HotentryItemActivity extends AppCompatActivity {
                 WebView showingView = ((WebView)((View)view.getParentForAccessibility()).findViewById(R.id.webview));
 
                 // TODO: (2016/2/20 記)ブックマークなどがまだできないので暫定でクリップボードへコピー
-                ClipboardManager clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                final ClipboardManager clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                final String bkClipboardText = (clipboard.hasPrimaryClip())
+                                                    ? clipboard.getPrimaryClip().getItemAt(0).getText().toString()
+                                                    : "";
                 clipboard.setPrimaryClip(ClipData.newPlainText("SHOW_URL", showingView.getUrl()));
 
                 // Material Designガイドラインに則り、Snackbar 表示時にFABと被らないようにするため、CoordinatorLayoutを使用する
                 Snackbar.make(coordinatorLayout, "クリップボードにコピーしました！\r\n" + showingView.getUrl(), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                        .setAction("Cancel", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                clipboard.setPrimaryClip(ClipData.newPlainText("SHOW_URL", bkClipboardText));
+                                Toast.makeText(getApplicationContext(), "Snackbarがタップされました！\r\nクリップボードを元に戻しました。", Toast.LENGTH_SHORT).show();
+                            }
+                        }).show();
             }
         });
     }
