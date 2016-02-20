@@ -9,18 +9,19 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 /**
- * Created by takayoshi on 2016/02/14.
+ * Volley標準API取得外のリクエスト処理用
+ * @author takayoshi uchida
  */
 public class InputStreamRequest extends Request<InputStream> {
 
     private final Response.Listener<InputStream> mListener;
 
     /**
-     *
-     * @param method
-     * @param url
-     * @param listener
-     * @param errorListener
+     * コンストラクタ
+     * @param method HTTPメソッド
+     * @param url アクセスURL
+     * @param listener 取得成功時実行リスナー
+     * @param errorListener 取得失敗時実行リスナー
      */
     public InputStreamRequest(int method, String url,
                               Response.Listener<InputStream> listener,
@@ -30,10 +31,10 @@ public class InputStreamRequest extends Request<InputStream> {
     }
 
     /**
-     *
-     * @param url
-     * @param listener
-     * @param errorListener
+     * コンストラクタ(GET)
+     * @param url アクセスURL
+     * @param listener 取得成功時実行リスナー
+     * @param errorListener 取得失敗時実行リスナー
      */
     public InputStreamRequest(String url, Response.Listener<InputStream> listener,
                               Response.ErrorListener errorListener) {

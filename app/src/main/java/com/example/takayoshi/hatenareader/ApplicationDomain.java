@@ -9,6 +9,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.takayoshi.hatenareader.network.InputStreamRequest;
 
+/**
+ * Singletonオブジェクト
+ * @author takayoshi uchida
+ */
 public class ApplicationDomain extends Application {
 
     public static final String TAG = ApplicationDomain.class.getSimpleName();
@@ -35,23 +39,40 @@ public class ApplicationDomain extends Application {
         return mRequestQueue;
     }
 
-    public <T> void addToRequestQueue(JsonObjectRequest req, String tag) {
-        // set the default tag if tag is empty
+    /**
+     * JSON取得用
+     * @param req リクエストオブジェクト
+     * @param tag 識別タグ
+     */
+    public void addToRequestQueue(JsonObjectRequest req, String tag) {
         req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
         getRequestQueue().add(req);
     }
 
-    public <T> void addToRequestQueue(InputStreamRequest req, String tag) {
-        // set the default tag if tag is empty
+    /**
+     * その他取得用
+     * @param req リクエストオブジェクト
+     * @param tag
+     */
+    public void addToRequestQueue(InputStreamRequest req, String tag) {
         req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
         getRequestQueue().add(req);
     }
 
+    /**
+     * その他取得用(タグなし)
+     * @param req リクエストオブジェクト
+     * @param <T> リクエスト型
+     */
     public <T> void addToRequestQueue(Request<T> req) {
         req.setTag(TAG);
         getRequestQueue().add(req);
     }
 
+    /**
+     * リクエストキャンセル
+     * @param tag 識別タグ
+     */
     public void cancelPendingRequests(Object tag) {
         if (mRequestQueue != null) {
             mRequestQueue.cancelAll(tag);

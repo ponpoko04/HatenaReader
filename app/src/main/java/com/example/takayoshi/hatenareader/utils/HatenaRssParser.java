@@ -16,7 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by takayoshi on 2016/02/14.
+ * はてなホッテントリRSSパーサー
+ * @author takayoshi uchida
  */
 public class HatenaRssParser {
 

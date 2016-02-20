@@ -13,7 +13,8 @@ import com.example.takayoshi.hatenareader.models.HatenaRss;
 import java.util.List;
 
 /**
- * Created by takayoshi on 2016/02/14.
+ * ホッテントリ一覧のListView用Adaptor
+ * @author takayoshi uchida
  */
 public class ListViewAdapter extends BaseAdapter {
     private LayoutInflater inflater;

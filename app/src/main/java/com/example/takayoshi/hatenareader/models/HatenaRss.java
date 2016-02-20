@@ -1,7 +1,8 @@
 package com.example.takayoshi.hatenareader.models;
 
 /**
- * Created by takayoshi on 2016/02/14.
+ * はてなRSSデータ格納用モデル
+ * @author takayoshi uchida
  */
 public class HatenaRss {
     public String title;

@@ -29,6 +29,10 @@ import com.example.takayoshi.hatenareader.utils.HatenaRssParser;
 import java.io.InputStream;
 import java.util.List;
 
+/**
+ * はてなのホッテントリ一覧を表示するActivityです。
+ * @author takayoshi uchida
+ */
 public class HotentryListActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private final String REQUEST_URL = "http://b.hatena.ne.jp/hotentry/it.rss";
@@ -52,7 +56,7 @@ public class HotentryListActivity extends AppCompatActivity implements AdapterVi
                     @Override
                     public void onResponse(InputStream response) {
                         hotentries = new HatenaRssParser().parse(response);
-                        adapter = new ListViewAdapter(context, R.layout.hotentry, hotentries);
+                        adapter = new ListViewAdapter(context, R.layout.list_item_hotentry, hotentries);
                         listView.setAdapter(adapter);
                     }
                 }, new Response.ErrorListener() {
@@ -80,8 +84,10 @@ public class HotentryListActivity extends AppCompatActivity implements AdapterVi
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String base = hotentries.get(position).link;
         Uri uri = Uri.parse(base);
-        // 単純にブラウザで詳細を表示させる
-        Intent i = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(i);
+
+        // 別画面を立ち上げて詳細を表示させる
+        Intent intent = new Intent(getApplication(), HotentryItemActivity.class);
+        intent.putExtra(HotentryItemActivity.TAG_LOAD_URI, uri.toString());
+        startActivity(intent);
     }
 }
