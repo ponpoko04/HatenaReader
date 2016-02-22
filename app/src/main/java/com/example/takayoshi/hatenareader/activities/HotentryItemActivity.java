@@ -49,7 +49,10 @@ public class HotentryItemActivity extends AppCompatActivity {
 
         // WebView の設定
         webView = (WebView)findViewById(R.id.webview);
-        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setJavaScriptEnabled(true);   //JS有効化
+        webView.getSettings().setLoadWithOverviewMode(true);    //ページ横幅を画面幅に合わせる
+        webView.getSettings().setUseWideViewPort(true); //ワイドビューポート対応
+        webView.getSettings().setBuiltInZoomControls(true); //ズーム機能
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -140,21 +143,19 @@ public class HotentryItemActivity extends AppCompatActivity {
 
     public void animateFAB(){
         if(isFabOpen){
-//            fab.startAnimation(rotate_backward);
             fab_menu1.startAnimation(fab_close);
             fab_menu2.startAnimation(fab_close);
             fab_menu1.setClickable(false);
             fab_menu2.setClickable(false);
             isFabOpen = false;
-            Log.d("Raj", "close");
+            Log.d("Fab_menu", "close");
         } else {
-//            fab.startAnimation(rotate_forward);
             fab_menu1.startAnimation(fab_open);
             fab_menu2.startAnimation(fab_open);
             fab_menu1.setClickable(true);
             fab_menu2.setClickable(true);
             isFabOpen = true;
-            Log.d("Raj","open");
+            Log.d("Fab_menu","open");
         }
     }
 }
