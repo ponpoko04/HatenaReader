@@ -101,32 +101,14 @@ public class HotentryItemActivity extends AppCompatActivity {
         fab_menu2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: はてなブックマーク追加をIntentで直コールする予定
-//                PackageManager pm = getPackageManager();
-//                Intent intent = pm.getLaunchIntentForPackage("com.hatena.android.bookmark");
-//                Intent intent = new Intent(Intent.ACTION_SEND);
-//                intent.setClassName("com.hatena.android.bookmark",
-//                                    "com.hatena.android.bookmark.PostActivity");
-//                intent.setFlags(0x3080001);
-//                startActivity(intent);
-
                 WebView showingView = ((WebView)((View)v.getParentForAccessibility()).findViewById(R.id.webview));
-                // 暫定でクリップボードへコピー
-                final ClipboardManager clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-                final String bkClipboardText = (clipboard.hasPrimaryClip())
-                        ? clipboard.getPrimaryClip().getItemAt(0).getText().toString()
-                        : "";
-                clipboard.setPrimaryClip(ClipData.newPlainText("SHOW_URL", showingView.getUrl()));
-
-                // Material Designガイドラインに則り、Snackbar 表示時にFABと被らないようにするため、CoordinatorLayoutを使用する
-                Snackbar.make(coordinatorLayout, "クリップボードにコピーしました！\r\n" + showingView.getUrl(), Snackbar.LENGTH_LONG)
-                        .setAction("Cancel", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                clipboard.setPrimaryClip(ClipData.newPlainText("SHOW_URL", bkClipboardText));
-                                Toast.makeText(getApplicationContext(), "Snackbarがタップされました！\r\nクリップボードを元に戻しました。", Toast.LENGTH_SHORT).show();
-                            }
-                        }).show();
+                // はてなブックマーク追加をIntentで直コールする
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setClassName("com.hatena.android.bookmark", "com.hatena.android.bookmark.PostActivity");
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, showingView.getUrl());
+                intent.setFlags(0x3080001);
+                startActivity(intent);
             }
         });
     }
