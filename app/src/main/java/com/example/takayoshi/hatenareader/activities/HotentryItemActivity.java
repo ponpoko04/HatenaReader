@@ -3,6 +3,7 @@ package com.example.takayoshi.hatenareader.activities;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -24,6 +25,8 @@ import android.widget.Toast;
 
 import com.example.takayoshi.hatenareader.R;
 
+import java.util.List;
+
 import static com.example.takayoshi.hatenareader.utils.LogUtils.makeLogTag;
 
 /**
@@ -33,11 +36,12 @@ import static com.example.takayoshi.hatenareader.utils.LogUtils.makeLogTag;
 public class HotentryItemActivity extends AppCompatActivity {
 
     public static final String TAG_LOAD_URI = makeLogTag(HotentryItemActivity.class);
+    public static final String HATEBU_APP_NAME = "com.hatena.android.bookmark";
 
     private WebView webView;
     private ProgressBar progressBar;
     private FloatingActionButton fab, fab_menu1, fab_menu2;
-    private boolean isFabOpen = false;
+    private boolean isFabOpen = false, isInstalledHatebu = false;
     private Animation fab_open,fab_close;
 
     @Override
@@ -76,17 +80,19 @@ public class HotentryItemActivity extends AppCompatActivity {
 
         webView.loadUrl(getIntent().getStringExtra(TAG_LOAD_URI));
 
+        isInstalledHatebu = this.isExistHatebu();
+
         // FloatingActionButton の設定
         final CoordinatorLayout coordinatorLayout = (CoordinatorLayout)findViewById(R.id.coordinator_layout);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab_menu1 = (FloatingActionButton) findViewById(R.id.fab_menu1);
-        fab_menu2 = (FloatingActionButton) findViewById(R.id.fab_menu2);
+        if (isInstalledHatebu) fab_menu2 = (FloatingActionButton) findViewById(R.id.fab_menu2);
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                animateFAB();
+                animateFAB(isInstalledHatebu);
             }
         });
         fab_menu1.setOnClickListener(new View.OnClickListener() {
@@ -98,19 +104,26 @@ public class HotentryItemActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-        fab_menu2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WebView showingView = ((WebView)((View)v.getParentForAccessibility()).findViewById(R.id.webview));
-                // はてなブックマーク追加をIntentで直コールする
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setClassName("com.hatena.android.bookmark", "com.hatena.android.bookmark.PostActivity");
-                intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_TEXT, showingView.getUrl());
-                intent.setFlags(0x3080001);
-                startActivity(intent);
-            }
-        });
+        if (isInstalledHatebu) {
+            fab_menu2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    WebView showingView = ((WebView) ((View) v.getParentForAccessibility()).findViewById(R.id.webview));
+
+                    try {
+                        // はてなブックマーク追加をIntentで直コールする
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.setClassName(HATEBU_APP_NAME, "com.hatena.android.bookmark.PostActivity");
+                        intent.setType("text/plain");
+                        intent.putExtra(Intent.EXTRA_TEXT, showingView.getUrl());
+                        intent.setFlags(0x3080001);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -123,21 +136,36 @@ public class HotentryItemActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    public void animateFAB(){
+    public void animateFAB(boolean isInstalledHatebu){
         if(isFabOpen){
             fab_menu1.startAnimation(fab_close);
-            fab_menu2.startAnimation(fab_close);
+            if (isInstalledHatebu) fab_menu2.startAnimation(fab_close);
             fab_menu1.setClickable(false);
-            fab_menu2.setClickable(false);
+            if (isInstalledHatebu) fab_menu2.setClickable(false);
             isFabOpen = false;
             Log.d("Fab_menu", "close");
         } else {
             fab_menu1.startAnimation(fab_open);
-            fab_menu2.startAnimation(fab_open);
+            if (isInstalledHatebu) fab_menu2.startAnimation(fab_open);
             fab_menu1.setClickable(true);
-            fab_menu2.setClickable(true);
+            if (isInstalledHatebu) fab_menu2.setClickable(true);
             isFabOpen = true;
-            Log.d("Fab_menu","open");
+            Log.d("Fab_menu", "open");
         }
+    }
+
+    /**
+     * はてなブックマークがインストール済であるか判定
+     * @return true:インストール済、false:未インストール
+     */
+    private boolean isExistHatebu() {
+        List<ApplicationInfo> appInfoList = getPackageManager().getInstalledApplications(PackageManager.GET_META_DATA);
+
+        for (ApplicationInfo info : appInfoList) {
+            if (HATEBU_APP_NAME.equals(info.processName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
