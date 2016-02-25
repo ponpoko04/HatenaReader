@@ -116,7 +116,6 @@ public class HotentryItemActivity extends AppCompatActivity {
                         intent.setClassName(HATEBU_APP_NAME, "com.hatena.android.bookmark.PostActivity");
                         intent.setType("text/plain");
                         intent.putExtra(Intent.EXTRA_TEXT, showingView.getUrl());
-                        intent.setFlags(0x3080001);
                         startActivity(intent);
                     } catch (Exception e) {
                         e.printStackTrace();
