@@ -17,7 +17,7 @@
  *
  */
 
-package com.example.takayoshi.hatenareader.utils;
+package com.takayoshi.android.hatenareader.utils;
 
 import android.util.Log;
 

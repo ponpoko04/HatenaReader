@@ -1,4 +1,4 @@
-package com.example.takayoshi.hatenareader.models;
+package com.takayoshi.android.hatenareader.models;
 
 /**
  * はてなRSSデータ格納用モデル

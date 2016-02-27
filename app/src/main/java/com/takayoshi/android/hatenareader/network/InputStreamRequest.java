@@ -1,4 +1,4 @@
-package com.example.takayoshi.hatenareader.network;
+package com.takayoshi.android.hatenareader.network;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;

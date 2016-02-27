@@ -1,9 +1,9 @@
-package com.example.takayoshi.hatenareader.utils;
+package com.takayoshi.android.hatenareader.utils;
 
 import android.util.Log;
 import android.util.Xml;
 
-import com.example.takayoshi.hatenareader.models.HatenaRss;
+import com.takayoshi.android.hatenareader.models.HatenaRss;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;

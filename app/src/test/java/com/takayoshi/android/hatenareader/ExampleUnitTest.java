@@ -1,4 +1,4 @@
-package com.example.takayoshi.hatenareader;
+package com.takayoshi.android.hatenareader;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.example.takayoshi.hatenareader.adapters;
+package com.takayoshi.android.hatenareader.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.takayoshi.hatenareader.R;
-import com.example.takayoshi.hatenareader.models.HatenaRss;
+import com.takayoshi.android.hatenareader.R;
+import com.takayoshi.android.hatenareader.models.HatenaRss;
 
 import java.util.List;
 

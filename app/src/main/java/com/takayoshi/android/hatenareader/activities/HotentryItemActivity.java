@@ -1,4 +1,4 @@
-package com.example.takayoshi.hatenareader.activities;
+package com.takayoshi.android.hatenareader.activities;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -23,11 +23,11 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.takayoshi.hatenareader.R;
+import com.takayoshi.android.hatenareader.R;
 
 import java.util.List;
 
-import static com.example.takayoshi.hatenareader.utils.LogUtils.makeLogTag;
+import static com.takayoshi.android.hatenareader.utils.LogUtils.makeLogTag;
 
 /**
  * ホッテントリ1件を表示するActivityです。
@@ -38,10 +38,11 @@ public class HotentryItemActivity extends AppCompatActivity {
     public static final String TAG_LOAD_URI = makeLogTag(HotentryItemActivity.class);
     public static final String HATEBU_APP_NAME = "com.hatena.android.bookmark";
     public static final String TWICCA_APP_NAME = "jp.r246.twicca";
+    public static final String HANGOUT_APP_NAME = "com.google.android.talk";
 
     private WebView webView;
     private ProgressBar progressBar;
-    private FloatingActionButton fab, fab_menu1, fab_menu2, fab_menu3;
+    private FloatingActionButton fab, fab_menu1, fab_menu2, fab_menu3, fab_menu4;
     private boolean isFabOpen = false, isInstalledHatebu = false, isInstalledTwitter = false;
     private Animation fab_open,fab_close;
 
@@ -85,11 +86,11 @@ public class HotentryItemActivity extends AppCompatActivity {
         isInstalledTwitter = this.isExistTwitter();
 
         // FloatingActionButton の設定
-        final CoordinatorLayout coordinatorLayout = (CoordinatorLayout)findViewById(R.id.coordinator_layout);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab_menu1 = (FloatingActionButton) findViewById(R.id.fab_menu1);
-        if (isInstalledHatebu) fab_menu2 = (FloatingActionButton) findViewById(R.id.fab_menu2);
+        fab_menu2 = (FloatingActionButton) findViewById(R.id.fab_menu2);
         if (isInstalledTwitter) fab_menu3 = (FloatingActionButton) findViewById(R.id.fab_menu3);
+        if (isInstalledHatebu) fab_menu4 = (FloatingActionButton) findViewById(R.id.fab_menu4);
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -98,6 +99,21 @@ public class HotentryItemActivity extends AppCompatActivity {
                 animateFAB(isInstalledHatebu);
             }
         });
+        this.addEventListenerFAB();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
+            // 戻るボタン押下時
+            webView.goBack();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void addEventListenerFAB() {
+        // 上1左0
         fab_menu1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,25 +123,27 @@ public class HotentryItemActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-        if (isInstalledHatebu) {
-            fab_menu2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    WebView showingView = ((WebView) ((View) v.getParentForAccessibility()).findViewById(R.id.webview));
 
-                    try {
-                        // はてなブックマーク追加をIntentで直コールする
-                        Intent intent = new Intent(Intent.ACTION_SEND);
-                        intent.setClassName(HATEBU_APP_NAME, "com.hatena.android.bookmark.PostActivity");
-                        intent.setType("text/plain");
-                        intent.putExtra(Intent.EXTRA_TEXT, showingView.getUrl());
-                        startActivity(intent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        // 上2左0
+        fab_menu2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WebView showingView = ((WebView) ((View) v.getParentForAccessibility()).findViewById(R.id.webview));
+
+                try {
+                    // HangoutをIntentで直コールする
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setClassName(HANGOUT_APP_NAME, "com.google.android.apps.hangouts.phone.ShareIntentActivity");
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_TEXT, showingView.getUrl());
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            });
-        }
+            }
+        });
+
+        // 上1左1
         if (isInstalledTwitter) {
             fab_menu3.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -145,37 +163,54 @@ public class HotentryItemActivity extends AppCompatActivity {
                 }
             });
         }
-    }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
-            // 戻るボタン押下時
-            webView.goBack();
-            return true;
+        // 上2左1
+        if (isInstalledHatebu) {
+            fab_menu4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    WebView showingView = ((WebView) ((View) v.getParentForAccessibility()).findViewById(R.id.webview));
+
+                    try {
+                        // はてなブックマーク追加をIntentで直コールする
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.setClassName(HATEBU_APP_NAME, "com.hatena.android.bookmark.PostActivity");
+                        intent.setType("text/plain");
+                        intent.putExtra(Intent.EXTRA_TEXT, showingView.getUrl());
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
-        return super.onKeyDown(keyCode, event);
     }
 
     public void animateFAB(boolean isInstalledHatebu){
         if(isFabOpen){
             fab_menu1.startAnimation(fab_close);
-            if (isInstalledHatebu) fab_menu2.startAnimation(fab_close);
+            fab_menu2.startAnimation(fab_close);
             if (isInstalledTwitter) fab_menu3.startAnimation(fab_close);
+            if (isInstalledHatebu) fab_menu4.startAnimation(fab_close);
+
             fab_menu1.setClickable(false);
-            if (isInstalledHatebu) fab_menu2.setClickable(false);
+            fab_menu2.setClickable(false);
             if (isInstalledTwitter) fab_menu3.setClickable(false);
+            if (isInstalledHatebu) fab_menu4.setClickable(false);
+
             isFabOpen = false;
-            Log.d("Fab_menu", "close");
         } else {
             fab_menu1.startAnimation(fab_open);
-            if (isInstalledHatebu) fab_menu2.startAnimation(fab_open);
+            fab_menu2.startAnimation(fab_open);
             if (isInstalledTwitter) fab_menu3.startAnimation(fab_open);
+            if (isInstalledHatebu) fab_menu4.startAnimation(fab_open);
+
             fab_menu1.setClickable(true);
-            if (isInstalledHatebu) fab_menu2.setClickable(true);
+            fab_menu2.setClickable(true);
             if (isInstalledTwitter) fab_menu3.setClickable(true);
+            if (isInstalledHatebu) fab_menu4.setClickable(true);
+
             isFabOpen = true;
-            Log.d("Fab_menu", "open");
         }
     }
 

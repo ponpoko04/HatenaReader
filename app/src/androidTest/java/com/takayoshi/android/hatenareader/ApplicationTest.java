@@ -1,4 +1,4 @@
-package com.example.takayoshi.hatenareader;
+package com.takayoshi.android.hatenareader;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

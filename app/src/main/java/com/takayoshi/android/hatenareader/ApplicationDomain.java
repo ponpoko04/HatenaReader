@@ -1,4 +1,4 @@
-package com.example.takayoshi.hatenareader;
+package com.takayoshi.android.hatenareader;
 
 import android.app.Application;
 import android.text.TextUtils;
@@ -7,7 +7,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.takayoshi.hatenareader.network.InputStreamRequest;
+import com.takayoshi.android.hatenareader.network.InputStreamRequest;
 
 /**
  * Singletonオブジェクト
