@@ -1,4 +1,4 @@
-package com.example.takayoshi.hatenareader.activities;
+package com.takayoshi.android.hatenareader.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,12 +19,12 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
-import com.example.takayoshi.hatenareader.ApplicationDomain;
-import com.example.takayoshi.hatenareader.adapters.ListViewAdapter;
-import com.example.takayoshi.hatenareader.models.HatenaRss;
-import com.example.takayoshi.hatenareader.network.InputStreamRequest;
-import com.example.takayoshi.hatenareader.R;
-import com.example.takayoshi.hatenareader.utils.HatenaRssParser;
+import com.takayoshi.android.hatenareader.ApplicationDomain;
+import com.takayoshi.android.hatenareader.adapters.ListViewAdapter;
+import com.takayoshi.android.hatenareader.models.HatenaRss;
+import com.takayoshi.android.hatenareader.network.InputStreamRequest;
+import com.takayoshi.android.hatenareader.R;
+import com.takayoshi.android.hatenareader.utils.HatenaRssParser;
 
 import java.io.InputStream;
 import java.util.List;
