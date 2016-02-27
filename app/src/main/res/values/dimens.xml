@@ -6,8 +6,10 @@
     <dimen name="fab_horizontal_margin">40dp</dimen>
     <dimen name="fab_horizontal_margin_x2">80dp</dimen>
     <dimen name="fab_horizontal_margin_x3">120dp</dimen>
+    <dimen name="fab_horizontal_margin_x4">160dp</dimen>
     <dimen name="fab_vertical_margin_x0.5">36dp</dimen>
     <dimen name="fab_vertical_margin">72dp</dimen>
     <dimen name="fab_vertical_margin_x2">144dp</dimen>
     <dimen name="fab_vertical_margin_x3">216dp</dimen>
+    <dimen name="fab_vertical_margin_x4">288dp</dimen>
 </resources>
