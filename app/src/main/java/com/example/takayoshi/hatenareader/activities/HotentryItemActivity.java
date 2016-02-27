@@ -37,11 +37,12 @@ public class HotentryItemActivity extends AppCompatActivity {
 
     public static final String TAG_LOAD_URI = makeLogTag(HotentryItemActivity.class);
     public static final String HATEBU_APP_NAME = "com.hatena.android.bookmark";
+    public static final String TWICCA_APP_NAME = "jp.r246.twicca";
 
     private WebView webView;
     private ProgressBar progressBar;
-    private FloatingActionButton fab, fab_menu1, fab_menu2;
-    private boolean isFabOpen = false, isInstalledHatebu = false;
+    private FloatingActionButton fab, fab_menu1, fab_menu2, fab_menu3;
+    private boolean isFabOpen = false, isInstalledHatebu = false, isInstalledTwitter = false;
     private Animation fab_open,fab_close;
 
     @Override
@@ -81,12 +82,14 @@ public class HotentryItemActivity extends AppCompatActivity {
         webView.loadUrl(getIntent().getStringExtra(TAG_LOAD_URI));
 
         isInstalledHatebu = this.isExistHatebu();
+        isInstalledTwitter = this.isExistTwitter();
 
         // FloatingActionButton の設定
         final CoordinatorLayout coordinatorLayout = (CoordinatorLayout)findViewById(R.id.coordinator_layout);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab_menu1 = (FloatingActionButton) findViewById(R.id.fab_menu1);
         if (isInstalledHatebu) fab_menu2 = (FloatingActionButton) findViewById(R.id.fab_menu2);
+        if (isInstalledTwitter) fab_menu3 = (FloatingActionButton) findViewById(R.id.fab_menu3);
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -123,6 +126,25 @@ public class HotentryItemActivity extends AppCompatActivity {
                 }
             });
         }
+        if (isInstalledTwitter) {
+            fab_menu3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    WebView showingView = ((WebView) ((View) v.getParentForAccessibility()).findViewById(R.id.webview));
+
+                    try {
+                        // TwitterツイートをIntentで直コールする
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.setClassName(TWICCA_APP_NAME, "jp.r246.twicca.statuses.Send");
+                        intent.setType("text/plain");
+                        intent.putExtra(Intent.EXTRA_TEXT, " / " + showingView.getTitle() + " " + showingView.getUrl());
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -139,15 +161,19 @@ public class HotentryItemActivity extends AppCompatActivity {
         if(isFabOpen){
             fab_menu1.startAnimation(fab_close);
             if (isInstalledHatebu) fab_menu2.startAnimation(fab_close);
+            if (isInstalledTwitter) fab_menu3.startAnimation(fab_close);
             fab_menu1.setClickable(false);
             if (isInstalledHatebu) fab_menu2.setClickable(false);
+            if (isInstalledTwitter) fab_menu3.setClickable(false);
             isFabOpen = false;
             Log.d("Fab_menu", "close");
         } else {
             fab_menu1.startAnimation(fab_open);
             if (isInstalledHatebu) fab_menu2.startAnimation(fab_open);
+            if (isInstalledTwitter) fab_menu3.startAnimation(fab_open);
             fab_menu1.setClickable(true);
             if (isInstalledHatebu) fab_menu2.setClickable(true);
+            if (isInstalledTwitter) fab_menu3.setClickable(true);
             isFabOpen = true;
             Log.d("Fab_menu", "open");
         }
@@ -162,6 +188,21 @@ public class HotentryItemActivity extends AppCompatActivity {
 
         for (ApplicationInfo info : appInfoList) {
             if (HATEBU_APP_NAME.equals(info.processName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * twiccaがインストール済であるか判定
+     * @return true:インストール済、false:未インストール
+     */
+    private boolean isExistTwitter() {
+        List<ApplicationInfo> appInfoList = getPackageManager().getInstalledApplications(PackageManager.GET_META_DATA);
+
+        for (ApplicationInfo info : appInfoList) {
+            if (TWICCA_APP_NAME.equals(info.processName)) {
                 return true;
             }
         }
