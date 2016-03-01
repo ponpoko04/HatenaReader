@@ -5,10 +5,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -37,10 +41,12 @@ public class HotentryListActivity extends AppCompatActivity implements AdapterVi
 
     private final String REQUEST_URL = "http://b.hatena.ne.jp/hotentry/it.rss";
     private final String TAG_REQUEST_OBJ = "hatena_hotentry_rss_req";
+    private final String TAG_RELOAD_OBJ = "hatena_hotentry_rss_reload";
     private List<HatenaRss> hotentries;
     private BaseAdapter adapter;
     private Context context;
     private ListView listView;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,14 +56,58 @@ public class HotentryListActivity extends AppCompatActivity implements AdapterVi
         context = this.getApplicationContext();
         listView = (ListView)findViewById(R.id.listView);
         listView.setOnItemClickListener(this);
+        progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
-        InputStreamRequest request = new InputStreamRequest(REQUEST_URL,
+        InputStreamRequest request = makeRequest();
+        progressBar.setVisibility(View.VISIBLE);
+        ApplicationDomain.getInstance().addToRequestQueue(request, TAG_REQUEST_OBJ);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String base = hotentries.get(position).link;
+        Uri uri = Uri.parse(base);
+
+        // 別画面を立ち上げて詳細を表示させる
+        Intent intent = new Intent(getApplication(), HotentryItemActivity.class);
+        intent.putExtra(HotentryItemActivity.TAG_LOAD_URI, uri.toString());
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_actions, menu);
+
+        // 更新メニュータップ
+        MenuItem refreshMenu = menu.findItem(R.id.action_refresh);
+        refreshMenu.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                InputStreamRequest request = makeRequest();
+                progressBar.setVisibility(View.VISIBLE);
+                ApplicationDomain.getInstance().addToRequestQueue(request, TAG_RELOAD_OBJ);
+                // 他のコールバックを実行させない
+                return true;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    /**
+     * リクエスト作成
+     * @return 汎用リクエストオブジェクト
+     */
+    private InputStreamRequest makeRequest() {
+        return new InputStreamRequest(REQUEST_URL,
                 new Response.Listener<InputStream>() {
                     @Override
                     public void onResponse(InputStream response) {
                         hotentries = new HatenaRssParser().parse(response);
                         adapter = new ListViewAdapter(context, R.layout.list_item_hotentry, hotentries);
                         listView.setAdapter(adapter);
+                        progressBar.setVisibility(View.GONE);
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -73,21 +123,10 @@ public class HotentryListActivity extends AppCompatActivity implements AdapterVi
                         } else if( error instanceof NoConnectionError) {
                         } else if( error instanceof TimeoutError) {
                         }
+
+                        error.printStackTrace();
                     }
                 }
         );
-
-        ApplicationDomain.getInstance().addToRequestQueue(request, TAG_REQUEST_OBJ);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String base = hotentries.get(position).link;
-        Uri uri = Uri.parse(base);
-
-        // 別画面を立ち上げて詳細を表示させる
-        Intent intent = new Intent(getApplication(), HotentryItemActivity.class);
-        intent.putExtra(HotentryItemActivity.TAG_LOAD_URI, uri.toString());
-        startActivity(intent);
     }
 }
